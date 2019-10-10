@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">Кругольник</string>
+
+    <string name="figuresTitle">Список фигур</string>
+    <string name="figuresToHistory">Перейти к истории</string>
+
+    <string name="historyTitle">История</string>
+
+    <string name="historyAddHistoryTitle">Добавление новой истории</string>
+    <string name="historyAddHistoryDescription">Укажите имя фигуры, её площадь и периметр</string>
+    <string name="historyAddHistoryMessage">История добавлена успешно</string>
+    <string name="historyAddHistoryClicked">Нажата кнопка добавления истории</string>
+
+    <string name="historyUpdateHistoryTitle">Обновление истории</string>
+    <string name="historyUpdateHistoryDescription">Укажите новые значения для обновления истории</string>
+    <string name="historyUpdateHistoryMessage">История была успешно обновлена</string>
+    <string name="historyUpdateHistoryClicked">Нажата кнопка обновления истории</string>
+
+    <string name="historyRemoveHistoryTitle">Удаление истории</string>
+    <string name="historyRemoveHistoryDescription">Указанная история будет удалена, вы уверены?</string>
+    <string name="historyRemoveHistoryMessage">История была успешно удалена</string>
+    <string name="historyRemoveHistoryClicked">Нажата кнопка удаления истории</string>
+
+    <string name="historyRemoveAllHistoriesTitle">Очистка списка историй</string>
+    <string name="historyRemoveAllHistoriesDescription">Список историй будет очищен, вы уверены?</string>
+    <string name="historyRemoveAllHistoriesMessage">Список историй был успешно очищен</string>
+    <string name="historyRemoveAllHistoriesClicked">Нажата кнопка очистки списка</string>
+
+    <string name="squareTitle">Квадрат</string>
+    <string name="squareSide">Сторона</string>
+    <string name="squareArea">Площадь квадрата: %1$f</string>
+    <string name="squarePerimeter">Периметр квадрата: %1$f</string>
+
+    <string name="circleTitle">Круг</string>
+    <string name="circleRadius">Радиус</string>
+    <string name="circleArea">Площадь круга: %1$f</string>
+    <string name="circlePerimeter">Периметр круга: %1$f</string>
+
+    <string name="rectangleTitle">Прямоугольник</string>
+    <string name="rectangleHeight">Высота</string>
+    <string name="rectangleWidth">Ширина</string>
+    <string name="rectangleArea">Площадь прямоугольника: %1$f</string>
+    <string name="rectanglePerimeter">Периметр прямоугольника: %1$f</string>
+
+    <string name="hintResult">Результат</string>
+    <string name="hintArea">Площадь</string>
+    <string name="hintPerimeter">Периметр</string>
+    <string name="hintName">Название фигуры</string>
+
+    <string name="navigation_drawer_open">OPEN</string>
+    <string name="navigation_drawer_close">CLOSE</string>
+    <string name="recyclerViewFilled">RecyclerView успешно заполнен</string>
+    <string name="recyclerViewInitialized">RecyclerView инициализирован</string>
+
+    <string name="buttonPositive">ОК</string>
+    <string name="buttonNeutral">Отмена</string>
+
+    <string name="settingsPressed">Нажата кнопка настроек</string>
+
+    <string name="clearFieldsPressed">Нажата кнопка очистки полей</string>
+    <string name="clearFieldsComplete">Поля успешно очищены</string>
+
+    <string name="calculateAreaPressed">Нажата кнопка подсчёта площади</string>
+    <string name="calculateAreaComplete">Площадь подсчитана</string>
+    <string name="calculatePerimeterPressed">Нажата кнопка подсчёта периметра</string>
+    <string name="calculatePerimeterComplete">Периметр подсчитан</string>
+
+    <string name="calculateAndSaveIntoDBPressed">Нажата кнопка рассчёта и сохранения в БД</string>
+    <string name="calculateAndSaveIntoDBComplete">Данные успешно сохранены в бд</string>
+
+    <string name="calculateAndSaveIntoDatabase">Посчитать и сохранить в бд</string>
+
+    <string name="settingsPrecisionTitle">Разрядность</string>
+    <string name="settingsPrecisionKey">app_precision</string>
+    
+    <string name="historyRemoveAllRows">Очистить список истории</string>
+
+    <string name="precisionReturned">Получена разрядность: %1$d</string>
+
+    <string name="figureType">Тип фигуры:</string>
+</resources>

@@ -1,0 +1,96 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="addHistory" parent="Widget.AppCompat.ImageButton">
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:src">@drawable/ic_add_circle_outline</item>
+    </style>
+
+    <style name="textViewResult" parent="@android:style/TextAppearance.Widget.TextView">
+        <item name="android:textSize">20sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:hint">@string/hintResult</item>
+    </style>
+
+    <style name="clearButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:src">@drawable/ic_clear</item>
+    </style>
+
+    <style name="settingsButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:src">@drawable/ic_settings</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="circleRadius" parent="Widget.AppCompat.EditText">
+        <item name="android:hint">@string/circleRadius</item>
+        <item name="android:inputType">number|numberDecimal</item>
+    </style>
+
+
+    <style name="areaEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:hint">@string/hintArea</item>
+        <item name="android:inputType">number|numberDecimal</item>
+    </style>
+
+
+    <style name="perimeterEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:hint">@string/hintPerimeter</item>
+        <item name="android:inputType">number|numberDecimal</item>
+    </style>
+
+    <style name="areaResult" parent="@android:style/TextAppearance.Widget.TextView">
+        <item name="android:text">@string/hintArea</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="perimeterResult" parent="@android:style/TextAppearance.Widget.TextView">
+        <item name="android:text">@string/hintPerimeter</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="calculateAndSaveIntoDB" parent="Widget.AppCompat.Button">
+        <item name="android:text">@string/calculateAndSaveIntoDatabase</item>
+    </style>
+
+    <style name="squareSide" parent="Widget.AppCompat.EditText">
+        <item name="android:hint">@string/squareSide</item>
+        <item name="android:inputType">number</item>
+    </style>
+
+    <style name="height" parent="Widget.AppCompat.EditText">
+        <item name="android:singleLine">true</item>
+        <item name="android:hint">@string/rectangleHeight</item>
+        <item name="android:inputType">number|numberDecimal</item>
+    </style>
+
+    <style name="width" parent="Widget.AppCompat.EditText">
+        <item name="android:singleLine">true</item>
+        <item name="android:hint">@string/rectangleWidth</item>
+        <item name="android:inputType">number|numberDecimal</item>
+    </style>
+
+    <style name="figureType" parent="@android:style/TextAppearance.Widget.TextView">
+        <item name="android:text">@string/figureType</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="circleIcon" >
+        <item name="android:src">@drawable/circle</item>
+    </style>
+
+    <style name="squareIcon">
+        <item name="android:src">@drawable/square</item>
+    </style>
+
+    <style name="rectangleIcon">
+        <item name="android:src">@drawable/rectangle</item>
+    </style>
+</resources>

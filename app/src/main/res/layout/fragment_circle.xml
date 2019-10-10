@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/circleIcon"
+        style="@style/circleIcon"
+        android:layout_marginTop="35dp"
+        android:layout_width="225dp"
+        android:layout_height="225dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/circleFieldClear"
+        android:layout_marginTop="45dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="70dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/circleIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/circleRadius"
+            style="@style/circleRadius"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/circleClearFields"
+            style="@style/clearButton"
+            android:layout_marginStart="10dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/circleResults"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="45dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/circleFieldClear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <TextView
+            android:id="@+id/circleAreaResult"
+            style="@style/areaResult"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/circlePerimeterResult"
+            style="@style/perimeterResult"
+            android:layout_marginStart="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/circleSaveIntoDatabase"
+        style="@style/calculateAndSaveIntoDB"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="45dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

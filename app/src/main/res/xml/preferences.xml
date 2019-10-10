@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="1"
+        android:icon="@drawable/ic_format_list_numbered"
+        android:key="pre"
+        android:entries="@array/precision_entries"
+        android:entryValues="@array/precision_values"
+        android:title="@string/settingsPrecisionTitle" />
+</PreferenceScreen>

@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+
+apply plugin: "androidx.navigation.safeargs"
+
+def dbflow_version = "5.0.0-alpha1"
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.androidlabs"
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+    //Navigation Architecture Component
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
+
+    //Room
+    def room_version = "2.1.0-alpha07"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    //Apache Common CSV
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.6'
+
+    implementation 'org.decimal4j:decimal4j:1.0.3'
+
+    implementation 'androidx.preference:preference:1.0.0'
+}

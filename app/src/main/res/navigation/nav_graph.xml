@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/figures">
+    <fragment
+        android:id="@+id/figures"
+        android:name="com.androidlabs.fragment.Figures"
+        tools:layout="@layout/fragment_figures"/>
+    <fragment
+        android:id="@+id/history"
+        android:name="com.androidlabs.fragment.History"
+        tools:layout="@layout/fragment_history" />
+    <fragment
+        android:id="@+id/rectangle"
+        android:name="com.androidlabs.fragment.figures.Rectangle"
+        tools:layout="@layout/fragment_rectangle" />
+    <fragment
+        android:id="@+id/square"
+        android:name="com.androidlabs.fragment.figures.Square"
+        tools:layout="@layout/fragment_square" />
+    <fragment
+        android:id="@+id/circle"
+        android:name="com.androidlabs.fragment.figures.Circle"
+        tools:layout="@layout/fragment_circle" />
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.androidlabs.SettingsFragment"
+        android:label="SettingsFragment" />
+</navigation>
