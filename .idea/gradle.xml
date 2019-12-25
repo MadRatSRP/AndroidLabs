@@ -8,7 +8,7 @@
         </compositeConfiguration>
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="C:/Programs/JetBrains/Android/Gradle" />
+        <option name="gradleHome" value="C:/Dependencies/Gradle" />
         <option name="resolveModulePerSourceSet" value="false" />
         <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>

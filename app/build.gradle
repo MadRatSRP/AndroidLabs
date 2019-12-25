@@ -2,14 +2,12 @@ apply plugin: 'com.android.application'
 
 apply plugin: "androidx.navigation.safeargs"
 
-def dbflow_version = "5.0.0-alpha1"
-
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.androidlabs"
         minSdkVersion 23
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -28,25 +26,48 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    //Navigation Architecture Component
-    implementation "androidx.navigation:navigation-fragment:$nav_version"
-    implementation "androidx.navigation:navigation-ui:$nav_version"
+    // AppCompat
+    def version_appcompat = "1.1.0"
+    // Room
+    def version_room = "2.2.3"
+    // ConstraintLayout
+    def version_constraint_layout = "1.1.3"
+    // decimal4j
+    def version_decimal4j = "1.0.3"
+    // AndroidX Preference
+    def version_preference = '1.1.0'
 
-    //Room
-    def room_version = "2.1.0-alpha07"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // Testing
+    // Junit
+    def version_junit = "4.12"
+    // Runner
+    def version_runner = '1.2.0'
+    // Espresso
+    def version_espresso = '3.2.0'
 
-    //Apache Common CSV
-    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.6'
+    // AppCompat
+    implementation "androidx.appcompat:appcompat:$version_appcompat"
+    // Room
+    implementation "androidx.room:room-runtime:$version_room"
+    annotationProcessor "androidx.room:room-compiler:$version_room"
+    // ConstraintLayout
+    implementation "androidx.constraintlayout:constraintlayout:$version_constraint_layout"
+    // Navigation Architecture Component
+    implementation "androidx.navigation:navigation-fragment:$version_navigation"
+    implementation "androidx.navigation:navigation-ui:$version_navigation"
+    // Apache Common CSV
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.7'
+    // decimal4j
+    implementation "org.decimal4j:decimal4j:$version_decimal4j"
+    // AndroidX Preference
+    implementation "androidx.preference:preference:$version_preference"
 
-    implementation 'org.decimal4j:decimal4j:1.0.3'
-
-    implementation 'androidx.preference:preference:1.0.0'
+    // Testing
+    // Junit
+    testImplementation "junit:junit:$version_junit"
+    // Runner
+    androidTestImplementation "androidx.test:runner:$version_runner"
+    // Espresso
+    androidTestImplementation "androidx.test.espresso:espresso-core:$version_espresso"
 }
