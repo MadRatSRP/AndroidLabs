@@ -25,7 +25,7 @@
         android:name="com.androidlabs.fragment.figures.Circle"
         tools:layout="@layout/fragment_circle" />
     <fragment
-        android:id="@+id/settings"
+        android:id="@+id/showSettings"
         android:name="com.androidlabs.SettingsFragment"
         android:label="SettingsFragment" />
 </navigation>

@@ -22,52 +22,55 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+    viewBinding {
+        enabled = true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // AppCompat
-    def version_appcompat = "1.1.0"
+    def app_compat = "1.1.0"
     // Room
-    def version_room = "2.2.3"
+    def room = "2.2.3"
     // ConstraintLayout
-    def version_constraint_layout = "1.1.3"
+    def constraint_layout = "1.1.3"
     // decimal4j
-    def version_decimal4j = "1.0.3"
+    def decimal4j = "1.0.3"
     // AndroidX Preference
-    def version_preference = '1.1.0'
+    def androidx_preference = '1.1.0'
 
     // Testing
     // Junit
-    def version_junit = "4.12"
+    def junit = "4.12"
     // Runner
-    def version_runner = '1.2.0'
+    def junit_runner = '1.2.0'
     // Espresso
-    def version_espresso = '3.2.0'
+    def espresso = '3.2.0'
 
     // AppCompat
-    implementation "androidx.appcompat:appcompat:$version_appcompat"
+    implementation "androidx.appcompat:appcompat:$app_compat"
     // Room
-    implementation "androidx.room:room-runtime:$version_room"
-    annotationProcessor "androidx.room:room-compiler:$version_room"
+    implementation "androidx.room:room-runtime:$room"
+    annotationProcessor "androidx.room:room-compiler:$room"
     // ConstraintLayout
-    implementation "androidx.constraintlayout:constraintlayout:$version_constraint_layout"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout"
     // Navigation Architecture Component
     implementation "androidx.navigation:navigation-fragment:$version_navigation"
     implementation "androidx.navigation:navigation-ui:$version_navigation"
     // Apache Common CSV
     implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.7'
     // decimal4j
-    implementation "org.decimal4j:decimal4j:$version_decimal4j"
+    implementation "org.decimal4j:decimal4j:$decimal4j"
     // AndroidX Preference
-    implementation "androidx.preference:preference:$version_preference"
+    implementation "androidx.preference:preference:$androidx_preference"
 
     // Testing
     // Junit
-    testImplementation "junit:junit:$version_junit"
+    testImplementation "junit:junit:$junit"
     // Runner
-    androidTestImplementation "androidx.test:runner:$version_runner"
+    androidTestImplementation "androidx.test:runner:$junit_runner"
     // Espresso
-    androidTestImplementation "androidx.test.espresso:espresso-core:$version_espresso"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
 }

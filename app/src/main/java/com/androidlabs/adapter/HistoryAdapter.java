@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidlabs.R;
 import com.androidlabs.data.dao.FigureDao;
-import com.androidlabs.data.entity.Calculations;
 import com.androidlabs.model.History;
 import com.androidlabs.provider.MyContentProvider;
-import com.androidlabs.util.App;
-import com.androidlabs.data.AppDatabase;
 import com.androidlabs.data.dao.CalculationsDAO;
 import com.androidlabs.data.dao.DataDao;
 import com.androidlabs.data.entity.Data;
@@ -156,7 +152,7 @@ public class HistoryAdapter
             width = view.findViewById(R.id.widthValue);
             height = view.findViewById(R.id.heightValue);
             side = view.findViewById(R.id.sideValue);
-            radius = view.findViewById(R.id.radiusValue);
+            radius = view.findViewById(R.id.setupRadius);
 
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         }

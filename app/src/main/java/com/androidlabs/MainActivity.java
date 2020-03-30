@@ -1,11 +1,7 @@
 package com.androidlabs;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.widget.ImageButton;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,11 +10,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 
+import com.androidlabs.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
@@ -26,17 +20,20 @@ public class MainActivity extends AppCompatActivity {
     NavController navController;
     Toolbar toolbar;
 
-    ImageButton settings;
+    ActivityMainBinding binding;
 
     static Integer appPrecision;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        drawerLayout = findViewById(R.id.drawerLayout);
-        toolbar = findViewById(R.id.toolbar);
+        // ViewBinding initialization
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        drawerLayout = binding.drawerLayout;
+        toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -45,12 +42,12 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        //Инициализируем NavigationView
-        navigationView = findViewById(R.id.navigationView);
+        // NavigationView initialization
+        navigationView = binding.navigationView;
 
         Menu menu = navigationView.getMenu();
 
-        //Добавляем айтемы в список и перерисовываем NavigationView
+        // Добавляем айтемы в список и перерисовываем NavigationView
         menu.add(0, R.id.figures, 0,
                 getApplicationContext().getString(R.string.figuresTitle));
         menu.add(0, R.id.history, 0,
@@ -62,10 +59,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
 
-        settings = findViewById(R.id.settings);
-        settings.setOnClickListener(view -> {
-            //Navigation.findNavController(view).navigate(R.id.settings);
-            navController.navigate(R.id.settings);
+        binding.showSettings.setOnClickListener(view -> {
+            navController.navigate(R.id.showSettings);
         });
     }
 
@@ -85,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

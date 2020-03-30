@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <ImageView
-        android:id="@+id/rectangleIcon"
+        android:id="@+id/icon"
         style="@style/rectangleIcon"
         android:layout_marginTop="35dp"
         android:layout_width="225dp"
@@ -14,31 +14,31 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
-        android:id="@+id/rectangleFieldClear"
+        android:id="@+id/setupWidthAndHeightOrClearFields"
         android:layout_marginTop="45dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/rectangleIcon"
+        app:layout_constraintTop_toBottomOf="@id/icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <EditText
-            android:id="@+id/rectangleWidth"
+            android:id="@+id/setupWidth"
             style="@style/width"
             android:layout_width="125dp"
             android:layout_height="wrap_content" />
 
         <EditText
-            android:id="@+id/rectangleHeight"
+            android:id="@+id/setupHeight"
             style="@style/height"
             android:layout_marginStart="15dp"
             android:layout_width="125dp"
             android:layout_height="wrap_content" />
 
         <ImageButton
-            android:id="@+id/rectangleClearFields"
+            android:id="@+id/clearFields"
             style="@style/clearButton"
             android:layout_marginStart="10dp"
             android:layout_width="50dp"
@@ -46,24 +46,24 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/rectangleResults"
+        android:id="@+id/calculatedAreaAndPerimeterResultsLL"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="45dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/rectangleFieldClear"
+        app:layout_constraintTop_toBottomOf="@id/setupWidthAndHeightOrClearFields"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         <TextView
-            android:id="@+id/rectangleAreaResult"
+            android:id="@+id/calculatedAreaResult"
             style="@style/areaResult"
             android:layout_marginEnd="20dp"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_weight="1"/>
         <TextView
-            android:id="@+id/rectanglePerimeterResult"
+            android:id="@+id/calculatedPerimeterResult"
             style="@style/perimeterResult"
             android:layout_marginStart="20dp"
             android:layout_width="match_parent"
@@ -72,7 +72,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/rectangleSaveIntoDatabase"
+        android:id="@+id/calculateAndSaveIntoDatabase"
         style="@style/calculateAndSaveIntoDB"
         android:layout_marginStart="45dp"
         android:layout_marginEnd="45dp"

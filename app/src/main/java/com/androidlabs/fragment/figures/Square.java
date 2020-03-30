@@ -23,20 +23,19 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.androidlabs.R;
-import com.androidlabs.provider.MyContentProvider;
-import com.androidlabs.util.App;
 import com.androidlabs.data.AppDatabase;
 import com.androidlabs.data.dao.CalculationsDAO;
 import com.androidlabs.data.dao.DataDao;
 import com.androidlabs.data.dao.FigureDao;
-import com.androidlabs.data.entity.Calculations;
-import com.androidlabs.data.entity.Data;
+import com.androidlabs.databinding.FragmentSquareBinding;
+import com.androidlabs.provider.MyContentProvider;
+import com.androidlabs.util.App;
 
 import org.decimal4j.util.DoubleRounder;
 
 public class Square extends Fragment {
     //Главный layout экрана
-    private LinearLayout squareLayout;
+    private LinearLayout mainLayout;
 
     //Поле для ввода и кнопка очистки полей
     private EditText editSide;
@@ -58,26 +57,8 @@ public class Square extends Fragment {
 
     private SharedPreferences settings;
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //Слушатель кнопки очистки полей
-        clearFields.setOnClickListener(v -> {
-            showLog(R.string.clearFieldsPressed);
-            editSide.setText("");
-            areaResult.setText("");
-            perimeterResult.setText("");
-            showLog(R.string.clearFieldsComplete);
-        });
-        //Слушатель кнопки рассчета результата и записи в бд
-        calculateAndSaveIntoDB.setOnClickListener(view -> {
-            showLog(R.string.calculateAndSaveIntoDBPressed);
+    private FragmentSquareBinding binding;
 
-            calculateArea(Double.valueOf(editSide.getText().toString()));
-            calculatePerimeter(Double.valueOf(editSide.getText().toString()));
-            saveIntoDatabase(Double.valueOf(editSide.getText().toString()));
-        });
-    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -86,11 +67,13 @@ public class Square extends Fragment {
         String square = getContext().getString(R.string.squareTitle);
         // Присваиваем toolbar новый заголовок
         getActivity().setTitle(square);
-        View view = inflater.inflate(R.layout.fragment_square, container, false);
+
+        binding = FragmentSquareBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
         // Инициализация главного layout'а
-        squareLayout = view.findViewById(R.id.squareLinearLayout);
+        mainLayout = binding.mainLayout;
         // Инициализация ImageView
-        ImageView icon = view.findViewById(R.id.squareIcon);
+        ImageView icon = binding.icon;
 
         // Инициализация бд и интерфейсов для работы с моделями бд
         AppDatabase db = App.getInstance().getDatabase();
@@ -111,6 +94,50 @@ public class Square extends Fragment {
         addElementsProgrammatically(getContext());
 
         return view;
+    }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //Слушатель кнопки очистки полей
+        clearFields.setOnClickListener(v -> {
+            showLog(R.string.clearFieldsPressed);
+            editSide.setText("");
+            areaResult.setText("");
+            perimeterResult.setText("");
+            showLog(R.string.clearFieldsComplete);
+        });
+        //Слушатель кнопки рассчета результата и записи в бд
+        calculateAndSaveIntoDB.setOnClickListener(view -> {
+            showLog(R.string.calculateAndSaveIntoDBPressed);
+
+            Double sideValue = Double.valueOf(editSide.getText().toString());
+
+            calculateArea(sideValue);
+            calculatePerimeter(sideValue);
+            saveIntoDatabase(sideValue);
+        });
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Сохраняем данные полей в настройки
+        SharedPreferences.Editor prefEditor = settings.edit();
+        prefEditor.putString("side", editSide.getText().toString());
+        prefEditor.putString("area", areaResult.getText().toString());
+        prefEditor.putString("perimeter", perimeterResult.getText().toString());
+        prefEditor.apply();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Получаем данные полей из настроек
+        String side = settings.getString("side", "0");
+        String area = settings.getString("area", "0");
+        String perimeter = settings.getString("perimeter", "0");
+        //Присваиваем полям сохраненные значения
+        editSide.setText(side);
+        areaResult.setText(area);
+        perimeterResult.setText(perimeter);
     }
 
     private void calculateArea(Double side) {
@@ -192,7 +219,7 @@ public class Square extends Fragment {
         editSideAndClearFieldsLayout.addView(editSide);
         editSideAndClearFieldsLayout.addView(clearFields);
         //Добавляем Layout в главный layout
-        squareLayout.addView(editSideAndClearFieldsLayout);
+        mainLayout.addView(editSideAndClearFieldsLayout);
 
 
 
@@ -237,7 +264,7 @@ public class Square extends Fragment {
         calculationsResults.addView(perimeterResult);
 
         //Добавляем Layout в главный layout
-        squareLayout.addView(calculationsResults);
+        mainLayout.addView(calculationsResults);
 
 
 
@@ -257,36 +284,12 @@ public class Square extends Fragment {
         //Присваиваем параметры
         calculateAndSaveIntoDB.setLayoutParams(calculateAndSaveIntoDBParams);
         //Добавляем кнопку в главный layout
-        squareLayout.addView(calculateAndSaveIntoDB);
+        mainLayout.addView(calculateAndSaveIntoDB);
     }
     private void showLog(Integer messageId) {
         //Подбираем текст из ресурсов по его id
         String message = getContext().getString(messageId);
         //Отображение сообщения в логах
         Log.d(getClass().getSimpleName(), message);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //Сохраняем данные полей в настройки
-        SharedPreferences.Editor prefEditor = settings.edit();
-        prefEditor.putString("side", editSide.getText().toString());
-        prefEditor.putString("area", areaResult.getText().toString());
-        prefEditor.putString("perimeter", perimeterResult.getText().toString());
-        prefEditor.apply();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //Получаем данные полей из настроек
-        String side = settings.getString("side", "0");
-        String area = settings.getString("area", "0");
-        String perimeter = settings.getString("perimeter", "0");
-        //Присваиваем полям сохраненные значения
-        editSide.setText(side);
-        areaResult.setText(area);
-        perimeterResult.setText(perimeter);
     }
 }
