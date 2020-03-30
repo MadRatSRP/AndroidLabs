@@ -33,7 +33,7 @@ dependencies {
     // AppCompat
     def app_compat = "1.1.0"
     // Room
-    def room = "2.2.3"
+    def room = '2.2.5'
     // ConstraintLayout
     def constraint_layout = "1.1.3"
     // decimal4j
@@ -43,7 +43,7 @@ dependencies {
 
     // Testing
     // Junit
-    def junit = "4.12"
+    def junit = '4.13'
     // Runner
     def junit_runner = '1.2.0'
     // Espresso
@@ -60,7 +60,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment:$version_navigation"
     implementation "androidx.navigation:navigation-ui:$version_navigation"
     // Apache Common CSV
-    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.7'
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.8'
     // decimal4j
     implementation "org.decimal4j:decimal4j:$decimal4j"
     // AndroidX Preference

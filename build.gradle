@@ -2,7 +2,7 @@
 
 buildscript {
     def version_gradle = '3.6.1'
-    ext.version_navigation  = '2.2.0-rc04'
+    ext.version_navigation = '2.3.0-alpha04'
 
     repositories {
         google()
