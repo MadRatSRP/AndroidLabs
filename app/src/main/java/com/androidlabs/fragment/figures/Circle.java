@@ -169,6 +169,8 @@ public class Circle extends Fragment {
     public void onPause() {
         super.onPause();
         //Сохраняем данные полей в настройки
+        //SharedPreferences settings;
+
         SharedPreferences.Editor prefEditor = settings.edit();
         prefEditor.putString("radius", radius.getText().toString());
         prefEditor.putString("area", areaResult.getText().toString());
@@ -183,6 +185,7 @@ public class Circle extends Fragment {
         String radius = settings.getString("radius", "0");
         String area = settings.getString("area", "0");
         String perimeter = settings.getString("perimeter", "0");
+
         //Присваиваем полям сохраненные значения
         this.radius.setText(radius);
         areaResult.setText(area);

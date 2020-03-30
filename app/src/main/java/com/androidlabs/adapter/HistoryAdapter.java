@@ -41,7 +41,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
+public class HistoryAdapter
+        extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
     private CalculationsDAO calculationsDAO;
     DataDao dataDao;
     private FigureDao figureDao;
