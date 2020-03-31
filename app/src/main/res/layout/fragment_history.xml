@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
-        android:id="@+id/historyLL"
+        android:id="@+id/figureInformationLayout"
         android:orientation="horizontal"
         android:layout_marginStart="20dp"
         android:layout_width="match_parent"
@@ -13,26 +14,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <TextView
-            android:id="@+id/historyName"
+            android:id="@+id/figureName"
             android:textStyle="bold|italic"
             android:text="@string/hintName"
             android:layout_width="135dp"
             android:layout_height="35dp" />
         <TextView
-            android:id="@+id/historyArea"
+            android:id="@+id/figureArea"
             android:textStyle="bold|italic"
             android:text="@string/hintArea"
             android:layout_width="75dp"
             android:layout_height="35dp" />
         <TextView
-            android:id="@+id/historyPerimeter"
+            android:id="@+id/figurePerimeter"
             android:textStyle="bold|italic"
             android:text="@string/hintPerimeter"
             android:layout_width="75dp"
             android:layout_height="35dp"/>
     </LinearLayout>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/historySwipeRefreshLayout"
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
@@ -41,19 +42,15 @@
         android:layout_marginBottom="56dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/historyLL">
-
+        app:layout_constraintTop_toBottomOf="@id/figureInformationLayout">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/historyRecyclerView"
+            android:id="@+id/recyclerView"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
-
     <Button
-        android:id="@+id/historyRemoveAllRows"
+        android:id="@+id/clearHistoryList"
         android:text="@string/historyRemoveAllRows"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"

@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 apply plugin: "androidx.navigation.safeargs"
 
@@ -73,4 +75,9 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$junit_runner"
     // Espresso
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
