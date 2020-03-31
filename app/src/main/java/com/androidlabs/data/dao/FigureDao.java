@@ -8,7 +8,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.androidlabs.StaticMethods;
+import com.androidlabs.util.StaticMethods;
 import com.androidlabs.data.entity.Figure;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.androidlabs.StaticMethods;
+import com.androidlabs.util.StaticMethods;
 
 @Entity(tableName = StaticMethods.figureTitle)
 public class Figure {

@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.androidlabs.StaticMethods;
+import com.androidlabs.util.StaticMethods;
 
 @Entity(tableName = StaticMethods.calculationsTitle, foreignKeys = {@ForeignKey(entity = Figure.class,
         parentColumns = "id", childColumns = "figureId", onDelete = ForeignKey.CASCADE),

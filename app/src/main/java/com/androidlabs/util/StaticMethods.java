@@ -1,4 +1,4 @@
-package com.androidlabs;
+package com.androidlabs.util;
 
 public class StaticMethods {
     public static final String dataTitle = "dataTable";

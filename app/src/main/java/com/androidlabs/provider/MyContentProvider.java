@@ -13,7 +13,7 @@ import android.os.CancellationSignal;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.androidlabs.StaticMethods;
+import com.androidlabs.util.StaticMethods;
 import com.androidlabs.data.AppDatabase;
 import com.androidlabs.data.dao.CalculationsDAO;
 import com.androidlabs.data.dao.DataDao;
@@ -22,8 +22,6 @@ import com.androidlabs.data.entity.Calculations;
 import com.androidlabs.data.entity.Data;
 import com.androidlabs.data.entity.Figure;
 import com.androidlabs.util.App;
-
-import java.io.Serializable;
 
 public class MyContentProvider extends ContentProvider {
     // Адрес к папке с MyContentProvider

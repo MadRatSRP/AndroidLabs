@@ -3,10 +3,9 @@ package com.androidlabs.data.entity;
 import android.content.ContentValues;
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.androidlabs.StaticMethods;
+import com.androidlabs.util.StaticMethods;
 
 import java.io.Serializable;
 

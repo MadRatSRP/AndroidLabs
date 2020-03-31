@@ -1,4 +1,4 @@
-package com.androidlabs;
+package com.androidlabs.activity;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +11,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.androidlabs.R;
 import com.androidlabs.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 
