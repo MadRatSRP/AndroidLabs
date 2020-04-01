@@ -2,29 +2,30 @@ package com.androidlabs.fragment
 
 import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.androidlabs.R
+import com.androidlabs.activity.MainActivity
 import com.androidlabs.adapter.FiguresAdapter
 import com.androidlabs.databinding.FragmentFiguresBinding
 import com.androidlabs.model.Figure
 import com.androidlabs.provider.MyContentProvider
+import com.androidlabs.util.showLogMessage
 import java.util.*
 
 class Figures : Fragment() {
     private var figuresAdapter: FiguresAdapter? = null
     private val figures: MutableList<Figure> = ArrayList()
 
+    // ViewBinding variables
     private var mBinding: FragmentFiguresBinding? = null
     private val binding get() = mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        activity?.setTitle(R.string.figuresTitle)
+        (activity as MainActivity).setToolbarTitle(R.string.figuresTitle)
 
         // ViewBinding initialization
         mBinding = FragmentFiguresBinding.inflate(inflater, container, false)
@@ -33,7 +34,8 @@ class Figures : Fragment() {
         // Adapter initialization and its assignment to recyclerView
         figuresAdapter = FiguresAdapter()
         binding.recyclerView.adapter = figuresAdapter
-        context?.getString(R.string.recyclerViewInitialized)?.let { Log.d(javaClass.simpleName, it) }
+
+        showLogMessage(R.string.recyclerViewInitialized)
         return view
     }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -55,25 +57,27 @@ class Figures : Fragment() {
 
         figuresAdapter?.updateFiguresList(figures)
         binding.recyclerView.adapter = figuresAdapter
-        Log.d(javaClass.simpleName, context!!.getString(R.string.recyclerViewFilled))
+
+        showLogMessage(R.string.recyclerViewFilled)
     }
     override fun onDestroyView() {
         super.onDestroyView()
     }
 
     private fun removeAllFigures() {
-        context?.contentResolver?.delete(MyContentProvider.Companion.URI_FIGURE,
+        context?.contentResolver?.delete(
+                MyContentProvider.URI_FIGURE,
                 null, null)
     }
     private fun insertNewFigure(name: String?) {
-        val figure_values = ContentValues()
-        figure_values.put("name", name)
+        val figureValues = ContentValues()
+        figureValues.put("name", name)
+
         val figureUri = context?.contentResolver?.insert(
-                MyContentProvider.Companion.URI_FIGURE, figure_values
+                MyContentProvider.URI_FIGURE, figureValues
         )
-        val id_data = figureUri?.lastPathSegment?.let {
-            Integer.valueOf(it)
-        }
-        Log.d(javaClass.simpleName, "Новый элемент таблицы Figure: $id_data")
+
+        val dataId = figureUri?.lastPathSegment?.toInt()
+        showLogMessage("Новый элемент таблицы Figure: $dataId")
     }
 }

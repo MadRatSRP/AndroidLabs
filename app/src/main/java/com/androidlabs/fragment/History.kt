@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,15 +14,15 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidlabs.R
+import com.androidlabs.activity.MainActivity
 import com.androidlabs.adapter.HistoryAdapter
 import com.androidlabs.data.entity.Calculations
 import com.androidlabs.databinding.FragmentHistoryBinding
 import com.androidlabs.model.History
 import com.androidlabs.provider.MyContentProvider
-import com.google.android.material.snackbar.Snackbar
+import com.androidlabs.util.showLogMessage
+import com.androidlabs.util.showSnackMessage
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import java.io.BufferedReader
@@ -37,13 +36,15 @@ class History : Fragment() {
     private var historyAdapter: HistoryAdapter? = null
     private var spinnerText: String? = null
 
+    // ViewBinding variables
     private var mBinding: FragmentHistoryBinding? = null
     private val binding get() = mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        activity?.setTitle(R.string.historyTitle)
+        (activity as MainActivity).setToolbarTitle(R.string.historyTitle)
 
+        // ViewBinding initialization
         mBinding = FragmentHistoryBinding.inflate(layoutInflater, container, false)
         val view = binding.root
 
@@ -51,7 +52,8 @@ class History : Fragment() {
 
         historyAdapter = HistoryAdapter()
         binding.recyclerView.adapter = historyAdapter
-        showLog(R.string.recyclerViewInitialized)
+
+        showLogMessage(R.string.recyclerViewInitialized)
         return view
     }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -66,24 +68,25 @@ class History : Fragment() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
         binding.swipeRefreshLayout.setOnRefreshListener {
             Handler().postDelayed({
                 fillRecyclerViewFromDatabase(context)
                 binding.swipeRefreshLayout.isRefreshing = false
             }, 500)
         }
-        addHistory?.setOnClickListener { view: View? ->
-            showLog(R.string.historyAddHistoryClicked)
+        addHistory?.setOnClickListener {
+            showLogMessage(R.string.historyAddHistoryClicked)
             showAddHistoryDialog(context)
         }
-        binding.clearHistoryList.setOnClickListener { view: View? ->
-            showLog(R.string.historyRemoveAllHistoriesClicked)
+        binding.clearHistoryList.setOnClickListener {
+            showLogMessage(R.string.historyRemoveAllHistoriesClicked)
             showRemoveHistoriesDialog(context)
         }
     }
     override fun onDestroy() {
         super.onDestroy()
-        toolbar!!.removeView(addHistory)
+        toolbar?.removeView(addHistory)
     }
 
     private fun addHistoryButtonInitialization() {
@@ -124,22 +127,23 @@ class History : Fragment() {
         spinnerParams.weight = 1f
 
         // Получаем массив названий фигур и преобразовываем его в ArrayList<String>
-        val bundle: Bundle = context.contentResolver.call(
-                MyContentProvider.Companion.URI_CALCULATIONS, "getFiguresNames", null, null)!!
-        val spinnerItems = bundle.getStringArray("spinnerItems")
-        val spinnerArray = ArrayList(listOf(*spinnerItems))
+        val bundle: Bundle? = context.contentResolver.call(
+                MyContentProvider.URI_CALCULATIONS, "getFiguresNames", null, null)
+
+        val spinnerItems: Array<String>? = bundle?.getStringArray("spinnerItems")
 
         // Инициализируем адаптер и присваиваем его спиннеру
-        val spinnerAdapter = ArrayAdapter(
-                context, android.R.layout.simple_spinner_dropdown_item, spinnerArray
-        )
+        val spinnerAdapter: ArrayAdapter<String>? = spinnerItems?.let { arrayOfItems->
+            ArrayAdapter<String>(
+                    context, android.R.layout.simple_spinner_dropdown_item, arrayOfItems
+            )
+        }
+
         spinner.adapter = spinnerAdapter
         spinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-                spinnerText = spinner.selectedItem.toString()
-                Log.d(javaClass.simpleName, spinnerText)
+                showLogMessage(spinner.selectedItem.toString())
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
@@ -235,11 +239,11 @@ class History : Fragment() {
         builder.setView(mainLayout)
 
         //Добавляем кнопки и указываем слушатели для них
-        builder.setPositiveButton(context.getText(R.string.buttonPositive)) { dialog: DialogInterface?, which: Int ->
+        builder.setPositiveButton(context.getText(R.string.buttonPositive)) { _: DialogInterface?, _: Int ->
             newHistory(context, width.text.toString(), height.text.toString(), side.text.toString(),
                     radius.text.toString(), area.text.toString(), perimeter.text.toString())
-            showSnack(view, R.string.historyAddHistoryMessage)
-            showLog(R.string.historyAddHistoryMessage)
+            showSnackMessage(R.string.historyAddHistoryMessage)
+            showLogMessage(R.string.historyAddHistoryMessage)
         }
         builder.setNeutralButton(context.getText(R.string.buttonNeutral)) { dialog: DialogInterface?, which: Int -> }
         //Наконец, показываем AlertDialog
@@ -254,40 +258,50 @@ class History : Fragment() {
         val precisedRadius = checkForNull(radius)
         val precisedArea = checkForNull(area)
         val precisedPerimeter = checkForNull(perimeter)
-        val data_values = ContentValues()
-        data_values.put("width", precisedWidth)
-        data_values.put("height", precisedHeight)
-        data_values.put("side", precisedSide)
-        data_values.put("radius", precisedRadius)
-        val dataUri = context!!.contentResolver.insert(
-                MyContentProvider.Companion.URI_DATA, data_values
+        val dataValues = ContentValues()
+
+        dataValues.put("width", precisedWidth)
+        dataValues.put("height", precisedHeight)
+        dataValues.put("side", precisedSide)
+        dataValues.put("radius", precisedRadius)
+
+        val dataUri = context?.contentResolver?.insert(
+                MyContentProvider.URI_DATA, dataValues
         )
-        val id_data = Integer.valueOf(dataUri!!.lastPathSegment!!)
-        Log.d(javaClass.simpleName, "Новый элемент таблицы Data: $id_data")
-        addHistory(getContext(), id_data, precisedArea, precisedPerimeter)
+        val dataId = dataUri?.lastPathSegment?.toInt()
+
+        showLogMessage("Новый элемент таблицы Data: $dataId")
+
+        dataId?.let { addHistory(getContext(), it, precisedArea, precisedPerimeter) }
     }
 
     private fun addHistory(context: Context?, dataId: Int, area: Double, perimeter: Double) {
-        val id = historyAdapter!!.itemCount
-        historyAdapter!!.addHistory(History(id, dataId,
-                spinnerText, area, perimeter))
-        val bundle: Bundle = context!!.contentResolver.call(
-                MyContentProvider.Companion.URI_CALCULATIONS, "getFigureId", spinnerText, null)!!
+        val id = historyAdapter?.itemCount
+
+        id?.let {
+            History(it, dataId,
+                    spinnerText, area, perimeter)
+        }?.let { historyAdapter?.addHistory(it) }
+
+        val bundle: Bundle = context?.contentResolver?.call(
+                MyContentProvider.URI_CALCULATIONS, "getFigureId", spinnerText, null)!!
+
         val figureId = bundle.getInt("figureId")
         val calculationsValues = ContentValues()
+
         //calculationsValues.put("spin", spinnerText);
         calculationsValues.put("figureId", figureId)
         calculationsValues.put("dataId", dataId)
         calculationsValues.put("area", area)
         calculationsValues.put("perimeter", perimeter)
+
         val calculationsUri = context.contentResolver
                 .insert(MyContentProvider.Companion.URI_CALCULATIONS, calculationsValues)
-        val id_calculations = Integer.valueOf(calculationsUri!!.lastPathSegment!!)
-        Log.d(javaClass.simpleName,
-                "Новый элемент таблицы Calculations: $id_calculations")
+        val calculationsId = calculationsUri?.lastPathSegment?.toInt()
+        showLogMessage("Новый элемент таблицы Calculations: $calculationsId")
     }
 
-    fun checkForNull(text: String?): Double {
+    private fun checkForNull(text: String?): Double {
         val jojo: Double
         return if (TextUtils.isEmpty(text)) {
             jojo = 0.toDouble()
@@ -305,12 +319,14 @@ class History : Fragment() {
         builder.setCancelable(true)
         builder.setTitle(context.getString(R.string.historyRemoveAllHistoriesTitle))
         builder.setMessage(context.getString(R.string.historyRemoveAllHistoriesDescription))
+
         //Добавляем кнопки и указываем слушатели для них
-        builder.setPositiveButton(context.getText(R.string.buttonPositive)) { dialog: DialogInterface?, which: Int ->
+        builder.setPositiveButton(context.getText(R.string.buttonPositive)) { _: DialogInterface?, _: Int ->
             clearHistories()
-            Log.d(javaClass.simpleName, context.getString(R.string.historyRemoveAllHistoriesMessage))
+            showLogMessage(context.getString(R.string.historyRemoveAllHistoriesMessage))
         }
-        builder.setNeutralButton(context.getText(R.string.buttonNeutral)) { dialog: DialogInterface?, which: Int -> }
+
+        builder.setNeutralButton(context.getText(R.string.buttonNeutral)) { _: DialogInterface?, _: Int -> }
         //Показываем AlertDialog
         builder.show()
     }
@@ -318,7 +334,7 @@ class History : Fragment() {
     @Throws(IOException::class)
     private fun setDataFromCSVFile(context: Context?) {
         //Указываем потоку название файла в папке ресурсов assets
-        val file = getContext()!!.assets.open("data.csv")
+        val file = getContext()?.assets?.open("data.csv")
         //Указываем путь к файлу и кодировку, в которой будем его читать
         val bufferedReader = BufferedReader(
                 InputStreamReader(file, "Windows-1251"))
@@ -350,7 +366,7 @@ class History : Fragment() {
                     MyContentProvider.Companion.URI_DATA, data_values
             )
             val id_data = Integer.valueOf(dataUri!!.lastPathSegment!!)
-            Log.d(javaClass.simpleName, "Новый элемент таблицы Data: $id_data")
+            showLogMessage("Новый элемент таблицы Data: $id_data")
         }
     }
 
@@ -381,12 +397,12 @@ class History : Fragment() {
             when (id) {
                 1 -> {
                     bundle = context!!.contentResolver.call(
-                            MyContentProvider.Companion.URI_DATA, "getIdBySide", 66.toString(), null)!!
+                            MyContentProvider.URI_DATA, "getIdBySide", 66.toString(), null)!!
                     dataId = bundle.getInt("id")
                 }
                 2 -> {
-                    bundle = context!!.contentResolver.call(
-                            MyContentProvider.Companion.URI_DATA, "getIdByRadius", 15.toString(), null
+                    bundle = context?.contentResolver?.call(
+                            MyContentProvider.URI_DATA, "getIdByRadius", 15.toString(), null
                     )!!
                     dataId = bundle.getInt("id")
                 }
@@ -395,14 +411,14 @@ class History : Fragment() {
                     bundle.putInt("width", 25)
                     bundle.putInt("height", 33)
                     val new_bundle: Bundle = context!!.contentResolver.call(
-                            MyContentProvider.Companion.URI_DATA, "getIdByWidthAndHeight", null, bundle
+                            MyContentProvider.URI_DATA, "getIdByWidthAndHeight", null, bundle
                     )!!
                     dataId = new_bundle.getInt("id")
                 }
             }
             val name = csvRecord["name"]
-            val area = java.lang.Double.valueOf(csvRecord["area"])
-            val perimeter = java.lang.Double.valueOf(csvRecord["perimeter"])
+            val area = csvRecord["area"].toDouble()
+            val perimeter = csvRecord["perimeter"].toDouble()
             histories.add(History(id, dataId, name, area, perimeter))
         }
         //Передаём функции получившийся список
@@ -452,7 +468,7 @@ class History : Fragment() {
             val id = calculationsList[i].figureId
 
             //Подбираем название фигуры по айди
-            val bundle: Bundle = getContext()!!.contentResolver.call(MyContentProvider.Companion.URI_CALCULATIONS,
+            val bundle: Bundle = getContext()?.contentResolver?.call(MyContentProvider.URI_CALCULATIONS,
                     "getFigureName", id.toString(), null)!!
             val name = bundle.getString("name")
             val calculationsId = calculationsList[i].id
@@ -463,7 +479,8 @@ class History : Fragment() {
         }
         //Передаём функции апдейта списка получившийся массив
         updateRecyclerView(histories)
-        Log.d(javaClass.simpleName, getContext()!!.getString(R.string.recyclerViewFilled))
+
+        showLogMessage(getContext()!!.getString(R.string.recyclerViewFilled))
     }
 
     private fun updateRecyclerView(histories: List<History>) {
@@ -472,22 +489,8 @@ class History : Fragment() {
     }
 
     private fun clearHistories() {
-        historyAdapter!!.clearHistory()
-        context!!.contentResolver
-                .delete(MyContentProvider.Companion.URI_CALCULATIONS, null, null)
-    }
-
-    private fun showSnack(view: View?, messageId: Int) {
-        //Подбираем текст из ресурсов по его id
-        val message = context!!.getString(messageId)
-        //Отображаем снэк
-        Snackbar.make(view!!, message, Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun showLog(messageId: Int) {
-        //Подбираем текст из ресурсов по его id
-        val message = context!!.getString(messageId)
-        //Отображение сообщения в логах
-        Log.d(javaClass.simpleName, message)
+        historyAdapter?.clearHistory()
+        context?.contentResolver
+                ?.delete(MyContentProvider.URI_CALCULATIONS, null, null)
     }
 }

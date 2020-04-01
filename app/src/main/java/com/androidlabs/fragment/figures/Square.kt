@@ -177,8 +177,8 @@ class Square : Fragment() {
         calculationsValues.put("area", areaResult?.text.toString().toDouble())
         calculationsValues.put("perimeter", perimeterResult?.text.toString().toDouble())
 
-        val calculationsUri = context!!.contentResolver.insert(
-                MyContentProvider.Companion.URI_CALCULATIONS, calculationsValues
+        val calculationsUri = context?.contentResolver?.insert(
+                MyContentProvider.URI_CALCULATIONS, calculationsValues
         )
         val calculationsId = calculationsUri?.lastPathSegment?.toInt()
 
