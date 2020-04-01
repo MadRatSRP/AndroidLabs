@@ -55,29 +55,32 @@ class MyContentProvider : ContentProvider() {
 
         // URI Matcher
         private val MATCHER = UriMatcher(UriMatcher.NO_MATCH)
-
-        init {
-            // Calculations
-            MATCHER.addURI(AUTHORITY, StaticMethods.calculationsTitle, CODE_CALCULATIONS_DIR)
-            MATCHER.addURI(AUTHORITY, StaticMethods.calculationsTitle + "/*", CODE_CALCULATIONS_ITEM)
-            // Data
-            MATCHER.addURI(AUTHORITY, StaticMethods.dataTitle, CODE_DATA_DIR)
-            MATCHER.addURI(AUTHORITY, StaticMethods.dataTitle + "/*", CODE_DATA_ITEM)
-            // Figure
-            MATCHER.addURI(AUTHORITY, StaticMethods.figureTitle, CODE_FIGURE_DIR)
-            MATCHER.addURI(AUTHORITY, StaticMethods.figureTitle + "/*", CODE_FIGURE_ITEM)
-        }
     }
 
-    var db: AppDatabase? = null
-    var figureDao: FigureDao? = null
-    var dataDao: DataDao? = null
-    var calculationsDAO: CalculationsDAO? = null
+    private lateinit var appDatabase: AppDatabase
+    private var figureDao: FigureDao? = null
+    private var dataDao: DataDao? = null
+    private var calculationsDAO: CalculationsDAO? = null
     var data: Data? = null
     var calculations: Calculations? = null
     var figure: Figure? = null
     var bundle: Bundle? = null
-    var context: Context? = null
+    var providerContext: Context? = null
+
+    init {
+        // Calculations
+        MATCHER.addURI(AUTHORITY, StaticMethods.calculationsTitle, CODE_CALCULATIONS_DIR)
+        MATCHER.addURI(AUTHORITY, StaticMethods.calculationsTitle + "/*", CODE_CALCULATIONS_ITEM)
+        // Data
+        MATCHER.addURI(AUTHORITY, StaticMethods.dataTitle, CODE_DATA_DIR)
+        MATCHER.addURI(AUTHORITY, StaticMethods.dataTitle + "/*", CODE_DATA_ITEM)
+        // Figure
+        MATCHER.addURI(AUTHORITY, StaticMethods.figureTitle, CODE_FIGURE_DIR)
+        MATCHER.addURI(AUTHORITY, StaticMethods.figureTitle + "/*", CODE_FIGURE_ITEM)
+
+        appDatabase = App.instance.database
+    }
+
     override fun onCreate(): Boolean {
         return true
     }
@@ -95,41 +98,39 @@ class MyContentProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<String>?,
                        selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
-        context = getContext()
-        if (context == null) {
+        providerContext = context
+        if (providerContext == null) {
             return null
         }
-        calculationsDAO = App.Companion.getInstance().getDatabase().calculationsDAO()
+        calculationsDAO = appDatabase.calculationsDAO()
         val code = MATCHER.match(uri)
         // Calculations
         return if (code == CODE_CALCULATIONS_DIR || code == CODE_CALCULATIONS_ITEM) {
-            val cursor: Cursor?
-            cursor = if (code == CODE_CALCULATIONS_DIR) {
+            val cursor: Cursor? = if (code == CODE_CALCULATIONS_DIR) {
                 calculationsDAO!!.selectAll()
             } else {
                 calculationsDAO!!.selectById(ContentUris.parseId(uri).toInt())
             }
-            cursor!!.setNotificationUri(context!!.contentResolver, uri)
+            cursor!!.setNotificationUri(providerContext!!.contentResolver, uri)
             cursor
         } else if (code == CODE_DATA_DIR || code == CODE_DATA_ITEM) {
-            dataDao = App.Companion.getInstance().getDatabase().dataDao()
-            val cursor: Cursor?
-            cursor = if (code == CODE_DATA_DIR) {
+            dataDao = appDatabase.dataDao()
+            val cursor: Cursor? = if (code == CODE_DATA_DIR) {
                 dataDao!!.selectAll()
             } else {
                 dataDao!!.selectById(ContentUris.parseId(uri).toInt())
             }
-            cursor!!.setNotificationUri(context!!.contentResolver, uri)
+            cursor!!.setNotificationUri(providerContext!!.contentResolver, uri)
             cursor
         } else if (code == CODE_FIGURE_DIR || code == CODE_FIGURE_ITEM) {
-            figureDao = App.Companion.getInstance().getDatabase().figureDao()
+            figureDao = appDatabase.figureDao()
             val cursor: Cursor?
             cursor = if (code == CODE_FIGURE_DIR) {
                 figureDao!!.selectAll()
             } else {
                 figureDao!!.selectById(ContentUris.parseId(uri).toInt())
             }
-            cursor!!.setNotificationUri(context!!.contentResolver, uri)
+            cursor!!.setNotificationUri(providerContext!!.contentResolver, uri)
             cursor
         } else {
             throw IllegalArgumentException("Неизвестный URI: $uri")
@@ -149,9 +150,8 @@ class MyContentProvider : ContentProvider() {
     }
 
     override fun call(method: String, arg: String?, extras: Bundle?): Bundle? {
-        db = App.Companion.getInstance().getDatabase()
-        figureDao = db!!.figureDao()
-        dataDao = db!!.dataDao()
+        figureDao = appDatabase!!.figureDao()
+        dataDao = appDatabase!!.dataDao()
         when (method) {
             "getFigureId" -> {
                 bundle = Bundle()
@@ -174,7 +174,7 @@ class MyContentProvider : ContentProvider() {
             }
             "getFiguresNames" -> {
                 bundle = Bundle()
-                val spinnerItems = figureDao.getNamesList()
+                val spinnerItems = figureDao?.namesList
                 bundle!!.putStringArray("spinnerItems", spinnerItems)
                 return bundle
             }
@@ -205,28 +205,28 @@ class MyContentProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        context = getContext()
-        return if (context == null) {
+        providerContext = context
+        return if (providerContext == null) {
             null
         } else when (MATCHER.match(uri)) {
             CODE_CALCULATIONS_DIR -> {
-                val id = App.Companion.getInstance().getDatabase().calculationsDAO()
-                        .insert(Calculations.Companion.fromContentValues(values)) as Int
-                context!!.contentResolver.notifyChange(uri, null)
+                val id = appDatabase.calculationsDAO()
+                        .insert(Calculations.fromContentValues(values)).toInt()
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 ContentUris.withAppendedId(uri, id.toLong())
             }
             CODE_CALCULATIONS_ITEM -> insertCalculations(uri, values)
             CODE_DATA_DIR -> {
-                val id_data = App.Companion.getInstance().getDatabase().dataDao()
-                        .insert(Data.Companion.fromContentValues(values)) as Int
-                context!!.contentResolver.notifyChange(uri, null)
+                val id_data = appDatabase.dataDao()
+                        .insert(Data.fromContentValues(values)).toInt()
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 ContentUris.withAppendedId(uri, id_data.toLong())
             }
             CODE_DATA_ITEM -> insertData(uri, values)
             CODE_FIGURE_DIR -> {
-                val id_figure = App.Companion.getInstance().getDatabase().figureDao()
-                        .insert(Figure.Companion.fromContentValues(values)) as Int
-                context!!.contentResolver.notifyChange(uri, null)
+                val id_figure = appDatabase.figureDao()
+                        .insert(Figure.fromContentValues(values)).toInt()
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 ContentUris.withAppendedId(uri, id_figure.toLong())
             }
             CODE_FIGURE_ITEM -> insertFigure(uri, values)
@@ -235,8 +235,7 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun insertData(uri: Uri, values: ContentValues?): Uri {
-        db = App.Companion.getInstance().getDatabase()
-        dataDao = db!!.dataDao()
+        dataDao = appDatabase!!.dataDao()
         data = Data()
         data!!.width = values!!.getAsDouble("width")
         data!!.height = values.getAsDouble("height")
@@ -247,9 +246,8 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun insertCalculations(uri: Uri, values: ContentValues?): Uri {
-        db = App.Companion.getInstance().getDatabase()
-        calculationsDAO = db!!.calculationsDAO()
-        figureDao = db!!.figureDao()
+        calculationsDAO = appDatabase!!.calculationsDAO()
+        figureDao = appDatabase!!.figureDao()
         calculations = Calculations()
         val spinnerText: String
         val figureId: Int
@@ -270,8 +268,7 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun insertFigure(uri: Uri, values: ContentValues?): Uri {
-        db = App.Companion.getInstance().getDatabase()
-        figureDao = db!!.figureDao()
+        figureDao = appDatabase.figureDao()
         figure = Figure()
         figure!!.name = values!!.getAsString("name")
         val id = figureDao!!.insert(figure)
@@ -280,36 +277,36 @@ class MyContentProvider : ContentProvider() {
 
     override fun update(uri: Uri, values: ContentValues?,
                         selection: String?, selectionArgs: Array<String>?): Int {
-        context = getContext()
-        return if (context == null) {
+        providerContext = getContext()
+        return if (providerContext == null) {
             0
         } else when (MATCHER.match(uri)) {
             CODE_CALCULATIONS_DIR ->                 //throw new IllegalArgumentException("Invalid URI, cannot update without ID" + uri);
                 updateCalculation(uri, values)
             CODE_CALCULATIONS_ITEM -> {
-                calculations = Calculations.Companion.fromContentValues(values)
+                calculations = Calculations.fromContentValues(values)
                 calculations!!.id = ContentUris.parseId(uri).toInt()
-                val count: Int = App.Companion.getInstance().getDatabase().calculationsDAO()
+                val count: Int = appDatabase.calculationsDAO()
                         .update(calculations)
-                context!!.contentResolver.notifyChange(uri, null)
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 count
             }
             CODE_DATA_DIR -> throw IllegalArgumentException("Invalid URI, cannot update without ID$uri")
             CODE_DATA_ITEM -> {
-                data = Data.Companion.fromContentValues(values)
+                data = Data.fromContentValues(values)
                 data!!.id = ContentUris.parseId(uri).toInt()
-                val count_data: Int = App.Companion.getInstance().getDatabase().dataDao()
+                val count_data: Int = appDatabase.dataDao()
                         .update(data)
-                context!!.contentResolver.notifyChange(uri, null)
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 count_data
             }
             CODE_FIGURE_DIR -> throw IllegalArgumentException("Invalid URI, cannot update without ID$uri")
             CODE_FIGURE_ITEM -> {
                 figure = Figure.Companion.fromContentValues(values)
-                figure!!.id = ContentUris.parseId(uri) as Int.toLong()
-                val count_figure: Int = App.Companion.getInstance().getDatabase().figureDao()
+                figure?.id = ContentUris.parseId(uri)
+                val count_figure: Int = appDatabase.figureDao()
                         .update(figure)
-                context!!.contentResolver.notifyChange(uri, null)
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 count_figure
             }
             else -> throw IllegalArgumentException("Unknown URI: $uri")
@@ -317,22 +314,22 @@ class MyContentProvider : ContentProvider() {
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
-        context = getContext()
-        return if (context == null) {
+        providerContext = getContext()
+        return if (providerContext == null) {
             0 /*(int) ContentUris.parseId(uri)*/
         } else when (MATCHER.match(uri)) {
             CODE_CALCULATIONS_DIR -> removeAllCalculations()
             CODE_CALCULATIONS_ITEM -> {
-                val count: Int = App.Companion.getInstance().getDatabase().calculationsDAO()
+                val count: Int = appDatabase.calculationsDAO()
                         .deleteById(Integer.valueOf(uri.lastPathSegment!!))
-                context!!.contentResolver.notifyChange(uri, null)
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 count
             }
             CODE_DATA_DIR -> throw IllegalArgumentException("Invalid URI, cannot update without ID$uri")
             CODE_DATA_ITEM -> {
-                val count_data: Int = App.Companion.getInstance().getDatabase().dataDao()
+                val count_data: Int = appDatabase.dataDao()
                         .deleteById(ContentUris.parseId(uri).toInt())
-                context!!.contentResolver.notifyChange(uri, null)
+                providerContext!!.contentResolver.notifyChange(uri, null)
                 count_data
             }
             CODE_FIGURE_DIR -> removeAllFigures()
@@ -342,20 +339,17 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun removeAllFigures(): Int {
-        db = App.Companion.getInstance().getDatabase()
-        figureDao = db!!.figureDao()
+        figureDao = appDatabase!!.figureDao()
         return figureDao!!.removeAllFigures()
     }
 
     private fun removeAllCalculations(): Int {
-        db = App.Companion.getInstance().getDatabase()
-        calculationsDAO = db!!.calculationsDAO()
+        calculationsDAO = appDatabase!!.calculationsDAO()
         return calculationsDAO!!.removeAllRows()
     }
 
     private fun removeCalculation(uri: Uri, selection: String): Int {
-        db = App.Companion.getInstance().getDatabase()
-        calculationsDAO = db!!.calculationsDAO()
+        calculationsDAO = appDatabase.calculationsDAO()
 
         //long id = Long.valueOf(uri.getLastPathSegment());
 
@@ -365,15 +359,14 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun updateCalculation(uri: Uri, values: ContentValues?): Int {
-        db = App.Companion.getInstance().getDatabase()
-        calculationsDAO = db!!.calculationsDAO()
+        calculationsDAO = appDatabase.calculationsDAO()
         calculations = Calculations()
-        calculations!!.id = values!!.getAsInteger("id")
-        calculations!!.dataId = values.getAsInteger("dataId")
-        calculations!!.figureId = values.getAsInteger("figureId")
-        calculations!!.area = values.getAsDouble("area")
-        calculations!!.perimeter = values.getAsDouble("perimeter")
-        calculationsDAO!!.update(calculations)
+        calculations?.id = values!!.getAsInteger("id")
+        calculations?.dataId = values.getAsInteger("dataId")
+        calculations?.figureId = values.getAsInteger("figureId")
+        calculations?.area = values.getAsDouble("area")
+        calculations?.perimeter = values.getAsDouble("perimeter")
+        calculationsDAO?.update(calculations)
         return calculations!!.id
     }
 }

@@ -489,7 +489,7 @@ class History : Fragment() {
     }
 
     private fun clearHistories() {
-        historyAdapter?.clearHistory()
+        historyAdapter?.clearHistoryList()
         context?.contentResolver
                 ?.delete(MyContentProvider.URI_CALCULATIONS, null, null)
     }

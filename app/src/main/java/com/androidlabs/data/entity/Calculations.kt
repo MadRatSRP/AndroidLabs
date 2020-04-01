@@ -6,7 +6,16 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.androidlabs.util.StaticMethods
 
-@Entity(tableName = StaticMethods.calculationsTitle, foreignKeys = [ForeignKey(entity = Figure::class, parentColumns = "id", childColumns = "figureId", onDelete = ForeignKey.CASCADE), ForeignKey(entity = Data::class, parentColumns = "id", childColumns = "dataId", onDelete = ForeignKey.CASCADE)])
+@Entity(tableName = StaticMethods.calculationsTitle,
+        foreignKeys = [ForeignKey(
+                entity = Figure::class,
+                parentColumns = arrayOf("id"),
+                childColumns = arrayOf("figureId"),
+                onDelete = ForeignKey.CASCADE),
+            ForeignKey(entity = Data::class,
+                    parentColumns = arrayOf("id"),
+                    childColumns = arrayOf("dataId"),
+                    onDelete = ForeignKey.CASCADE)])
 class Calculations {
     @kotlin.jvm.JvmField
     @PrimaryKey(autoGenerate = true)

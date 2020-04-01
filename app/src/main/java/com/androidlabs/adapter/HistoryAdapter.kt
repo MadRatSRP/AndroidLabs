@@ -24,21 +24,25 @@ import java.util.*
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryViewHolder>() {
     private val calculationsDAO: CalculationsDAO? = null
+
     var dataDao: DataDao? = null
+
     private val figureDao: FigureDao? = null
-    private var sharedPreferences: SharedPreferences
+
+    lateinit var sharedPreferences: SharedPreferences
+
     var spinnerText: String? = null
+
     private val histories = ArrayList<History>()
-    fun clearHistory() {
+
+    fun clearHistoryList() {
         histories.clear()
         notifyDataSetChanged()
     }
-
     fun addHistory(history: History) {
         histories.add(history)
         notifyDataSetChanged()
     }
-
     fun updateHistoryList(new_histories: List<History>?) {
         histories.clear()
         histories.addAll(new_histories!!)

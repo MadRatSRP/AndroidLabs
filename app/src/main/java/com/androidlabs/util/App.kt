@@ -5,8 +5,11 @@ import androidx.room.Room
 import com.androidlabs.data.AppDatabase
 
 class App : Application() {
-    var database: AppDatabase? = null
-        private set
+    companion object {
+        lateinit var instance: App
+    }
+
+    lateinit var database: AppDatabase
 
     override fun onCreate() {
         super.onCreate()
@@ -15,9 +18,5 @@ class App : Application() {
                 AppDatabase::class.java, "database")
                 .allowMainThreadQueries()
                 .build()
-    }
-
-    companion object {
-        var instance: App? = null
     }
 }
