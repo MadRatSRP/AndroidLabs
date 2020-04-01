@@ -76,7 +76,10 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    fun setNewToolbarTitle(@StringRes titleId: Int) {
+    fun setToolbarTitle(@StringRes titleId: Int) {
         binding.toolbar.setTitle(titleId)
+    }
+    fun setToolbarTitle(toolbarTitle: String) {
+        binding.toolbar.title = toolbarTitle
     }
 }

@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -43,6 +42,7 @@ class Square : Fragment() {
     private var precision: Int? = null
     private var settings: SharedPreferences? = null
     private var binding: FragmentSquareBinding? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Получаем заголовок из ресурсов
@@ -256,12 +256,5 @@ class Square : Fragment() {
         calculateAndSaveIntoDB!!.layoutParams = calculateAndSaveIntoDBParams
         //Добавляем кнопку в главный layout
         mainLayout!!.addView(calculateAndSaveIntoDB)
-    }
-
-    private fun showLog(messageId: Int) {
-        //Подбираем текст из ресурсов по его id
-        val message = context!!.getString(messageId)
-        //Отображение сообщения в логах
-        Log.d(javaClass.simpleName, message)
     }
 }

@@ -40,8 +40,9 @@ class Circle : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Setting up new activity toolbar title
-        (activity as MainActivity).setNewToolbarTitle(R.string.circleTitle)
+        // Setting up fragment's toolbar title
+        val toolbarTitle = context?.getString(R.string.circleTitle)
+        toolbarTitle?.let { (activity as MainActivity).setToolbarTitle(it) }
 
         // ViewBinding initialization
         mBinding = FragmentCircleBinding.inflate(layoutInflater, container, false)
@@ -51,7 +52,7 @@ class Circle : Fragment() {
         val figureDao = db.figureDao()
         calculationsDAO = db.calculationsDAO()
         dataDao = db.dataDao()
-        figureId = figureDao.getIdByName(context?.getString(R.string.circleTitle))
+        figureId = figureDao.getIdByName(toolbarTitle)
         calculations = Calculations()
 
         // Settings initialization
@@ -129,25 +130,26 @@ class Circle : Fragment() {
         val precisedWidth = 0.toDouble()
         val precisedHeight = 0.toDouble()
         val precisedSide = 0.toDouble()
-        val data_values = ContentValues()
+        val dataValues = ContentValues()
 
-        data_values.put("width", precisedWidth)
-        data_values.put("height", precisedHeight)
-        data_values.put("side", precisedSide)
-        data_values.put("radius", radius)
+        dataValues.put("width", precisedWidth)
+        dataValues.put("height", precisedHeight)
+        dataValues.put("side", precisedSide)
+        dataValues.put("radius", radius)
 
         val dataUri = context?.contentResolver?.insert(
-                MyContentProvider.Companion.URI_DATA, data_values
+                MyContentProvider.Companion.URI_DATA, dataValues
         )
-        val id_data = dataUri?.lastPathSegment?.let { Integer.valueOf(it) }
+        val dataId = dataUri?.lastPathSegment?.let { Integer.valueOf(it) }
         Log.d(javaClass.simpleName, "Новый элемент таблицы Data: $dataUri")
-        val calculations_values = ContentValues()
-        calculations_values.put("figureId", figureId)
-        calculations_values.put("dataId", id_data)
-        calculations_values.put("area", binding.calculatedAreaResult.text.toString().toDouble())
-        calculations_values.put("perimeter", binding.calculatedPerimeterResult.text.toString().toDouble())
+
+        val calculationsValues = ContentValues()
+        calculationsValues.put("figureId", figureId)
+        calculationsValues.put("dataId", dataId)
+        calculationsValues.put("area", binding.calculatedAreaResult.text.toString().toDouble())
+        calculationsValues.put("perimeter", binding.calculatedPerimeterResult.text.toString().toDouble())
         val calculationsUri = context?.contentResolver?.insert(
-                MyContentProvider.Companion.URI_CALCULATIONS, calculations_values
+                MyContentProvider.Companion.URI_CALCULATIONS, calculationsValues
         )
 
         showLogMessage("Новый элемент таблицы Calculations: " +
