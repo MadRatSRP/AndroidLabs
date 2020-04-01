@@ -21,17 +21,17 @@ class MyContentProvider : ContentProvider() {
         const val AUTHORITY = "com.androidlabs.provider"
 
         // URI для таблицы Calculations
-        val URI_CALCULATIONS = Uri.parse(
+        val URI_CALCULATIONS: Uri = Uri.parse(
                 "content://" + AUTHORITY + "/" + StaticMethods.calculationsTitle
         )
 
         // URI для таблицы Data
-        val URI_DATA = Uri.parse(
+        val URI_DATA: Uri = Uri.parse(
                 "content://" + AUTHORITY + "/" + StaticMethods.dataTitle
         )
 
         // URI для таблицы Figure
-        val URI_FIGURE = Uri.parse(
+        val URI_FIGURE: Uri = Uri.parse(
                 "content://" + AUTHORITY + "/" + StaticMethods.figureTitle
         )
 

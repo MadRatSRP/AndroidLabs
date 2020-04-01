@@ -12,20 +12,19 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.androidlabs.R
+import com.androidlabs.activity.MainActivity
 import com.androidlabs.data.AppDatabase
 import com.androidlabs.data.dao.CalculationsDAO
 import com.androidlabs.data.dao.DataDao
 import com.androidlabs.databinding.FragmentSquareBinding
 import com.androidlabs.provider.MyContentProvider
 import com.androidlabs.util.App
+import com.androidlabs.util.showLogMessage
 import org.decimal4j.util.DoubleRounder
 
 class Square : Fragment() {
-    //Главный layout экрана
-    private var mainLayout: LinearLayout? = null
-
     //Поле для ввода и кнопка очистки полей
-    private var editSide: EditText? = null
+    private var setupSide: EditText? = null
     private var clearFields: ImageButton? = null
 
     //Поля с выводом результатов рассчёта
@@ -39,55 +38,68 @@ class Square : Fragment() {
     private var calculationsDAO: CalculationsDAO? = null
     private var dataDao: DataDao? = null
     private var figureId = 0
-    private var precision: Int? = null
-    private var settings: SharedPreferences? = null
-    private var binding: FragmentSquareBinding? = null
+
+    // Precision
+    private var precision: Int = 0
+
+    // AndroidX Preferences
+    private lateinit var settings: SharedPreferences
+
+    // ViewBinding variables
+    private var mBinding: FragmentSquareBinding? = null
+    private val binding get() = mBinding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Получаем заголовок из ресурсов
-        val square = context!!.getString(R.string.squareTitle)
-        // Присваиваем toolbar новый заголовок
-        activity!!.title = square
-        binding = FragmentSquareBinding.inflate(layoutInflater, container, false)
-        val view = binding.getRoot()
-        // Инициализация главного layout'а
-        mainLayout = binding.mainLayout
-        // Инициализация ImageView
-        val icon = binding.icon
+        // Setting up fragment's toolbar title
+        val toolbarTitle = context?.getString(R.string.squareTitle)
+        toolbarTitle?.let { (activity as MainActivity).setToolbarTitle(it) }
+
+        // ViewBinding initialization
+        mBinding = FragmentSquareBinding.inflate(layoutInflater, container, false)
+        val view = binding.root
 
         // Инициализация бд и интерфейсов для работы с моделями бд
-        val db: AppDatabase = App.Companion.getInstance().getDatabase()
+        val db: AppDatabase = App.instance?.database!!
         val figureDao = db.figureDao()
         calculationsDAO = db.calculationsDAO()
         dataDao = db.dataDao()
         // Получить айди из таблицы фигур
-        figureId = figureDao!!.getIdByName(square)
+        figureId = figureDao.getIdByName(toolbarTitle)
 
         // Инициализация настроек
         settings = PreferenceManager.getDefaultSharedPreferences(context)
         // Получаем точность из настроек
         precision = Integer.valueOf(settings.getString("pre", "1")!!)
-        val log = context!!.getString(R.string.precisionReturned, precision)
-        Log.d(javaClass.simpleName, log)
+
+        context?.getString(R.string.precisionReturned, precision)?.let { showLogMessage(it) }
+
         addElementsProgrammatically(context)
         return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        //Слушатель кнопки очистки полей
-        clearFields!!.setOnClickListener { v: View? ->
-            showLog(R.string.clearFieldsPressed)
-            editSide!!.setText("")
-            areaResult!!.text = ""
-            perimeterResult!!.text = ""
-            showLog(R.string.clearFieldsComplete)
+
+        // ClearFields button listener
+        clearFields?.setOnClickListener {
+            showLogMessage(R.string.clearFieldsPressed)
+
+            val clearText = ""
+
+            setupSide?.setText(clearText)
+            areaResult?.text = clearText
+            perimeterResult?.text = clearText
+
+            showLogMessage(R.string.clearFieldsComplete)
         }
+
         //Слушатель кнопки рассчета результата и записи в бд
-        calculateAndSaveIntoDB!!.setOnClickListener { view: View? ->
-            showLog(R.string.calculateAndSaveIntoDBPressed)
-            val sideValue = java.lang.Double.valueOf(editSide!!.text.toString())
+        calculateAndSaveIntoDB!!.setOnClickListener {
+            showLogMessage(R.string.calculateAndSaveIntoDBPressed)
+
+            val sideValue = setupSide?.text.toString().toDouble()
+
             calculateArea(sideValue)
             calculatePerimeter(sideValue)
             saveIntoDatabase(sideValue)
@@ -96,70 +108,81 @@ class Square : Fragment() {
 
     override fun onPause() {
         super.onPause()
+
         //Сохраняем данные полей в настройки
-        val prefEditor = settings!!.edit()
-        prefEditor.putString("side", editSide!!.text.toString())
-        prefEditor.putString("area", areaResult!!.text.toString())
-        prefEditor.putString("perimeter", perimeterResult!!.text.toString())
+        val prefEditor = settings.edit()
+        prefEditor.putString("side", setupSide?.text.toString())
+        prefEditor.putString("area", areaResult?.text.toString())
+        prefEditor.putString("perimeter", perimeterResult?.text.toString())
         prefEditor.apply()
     }
 
     override fun onResume() {
         super.onResume()
+
         //Получаем данные полей из настроек
-        val side = settings!!.getString("side", "0")
-        val area = settings!!.getString("area", "0")
-        val perimeter = settings!!.getString("perimeter", "0")
+        val side = settings.getString("side", "0")
+        val area = settings.getString("area", "0")
+        val perimeter = settings.getString("perimeter", "0")
+
         //Присваиваем полям сохраненные значения
-        editSide!!.setText(side)
-        areaResult!!.text = area
-        perimeterResult!!.text = perimeter
+        setupSide?.setText(side)
+        areaResult?.text = area
+        perimeterResult?.text = perimeter
     }
 
     private fun calculateArea(side: Double) {
         // Рассчитываем площадь
         val area = side * side
         // Оставляем кол-во знаков после запятой, равное числу переменной precision
-        val preciseArea = DoubleRounder.round(area, precision!!)
+        val preciseArea = DoubleRounder.round(area, precision)
         // Присваиваем полю с выводом результата новое значение
-        areaResult!!.text = preciseArea.toString()
-        showLog(R.string.calculateAreaComplete)
+        areaResult?.text = preciseArea.toString()
+
+        showLogMessage(R.string.calculateAreaComplete)
     }
 
     private fun calculatePerimeter(side: Double) {
         // Рассчитываем периметр
         val perimeter = 4 * side
         // Оставляем кол-во знаков после запятой, равное числу переменной precision
-        val precisePerimeter = DoubleRounder.round(perimeter, precision!!)
+        val precisePerimeter = DoubleRounder.round(perimeter, precision)
         // Присваиваем полю с выводом результата новое значение
-        perimeterResult!!.text = precisePerimeter.toString()
-        showLog(R.string.calculatePerimeterComplete)
+        perimeterResult?.text = precisePerimeter.toString()
+
+        showLogMessage(R.string.calculatePerimeterComplete)
     }
 
     private fun saveIntoDatabase(side: Double) {
         val precisedWidth = 0.toDouble()
         val precisedHeight = 0.toDouble()
         val precisedRadius = 0.toDouble()
-        val data_values = ContentValues()
-        data_values.put("width", precisedWidth)
-        data_values.put("height", precisedHeight)
-        data_values.put("side", side)
-        data_values.put("radius", precisedRadius)
-        val dataUri = context!!.contentResolver.insert(
-                MyContentProvider.Companion.URI_DATA, data_values
+        val dataValues = ContentValues()
+
+        dataValues.put("width", precisedWidth)
+        dataValues.put("height", precisedHeight)
+        dataValues.put("side", side)
+        dataValues.put("radius", precisedRadius)
+
+        val dataUri = context?.contentResolver?.insert(
+                MyContentProvider.URI_DATA, dataValues
         )
-        val id_data = Integer.valueOf(dataUri!!.lastPathSegment!!)
-        Log.d(javaClass.simpleName, "Новый элемент таблицы Data: $id_data")
-        val calculations_values = ContentValues()
-        calculations_values.put("figureId", figureId)
-        calculations_values.put("dataId", id_data)
-        calculations_values.put("area", java.lang.Double.valueOf(areaResult!!.text.toString()))
-        calculations_values.put("perimeter", java.lang.Double.valueOf(perimeterResult!!.text.toString()))
+        val dataId = dataUri?.lastPathSegment?.toInt()
+
+        showLogMessage("Новый элемент таблицы Data: $dataId")
+
+        val calculationsValues = ContentValues()
+        calculationsValues.put("figureId", figureId)
+        calculationsValues.put("dataId", dataId)
+        calculationsValues.put("area", areaResult?.text.toString().toDouble())
+        calculationsValues.put("perimeter", perimeterResult?.text.toString().toDouble())
+
         val calculationsUri = context!!.contentResolver.insert(
-                MyContentProvider.Companion.URI_CALCULATIONS, calculations_values
+                MyContentProvider.Companion.URI_CALCULATIONS, calculationsValues
         )
-        val id_calculations = Integer.valueOf(calculationsUri!!.lastPathSegment!!)
-        Log.d(javaClass.simpleName, "Новый элемент таблицы Calculations: $id_calculations")
+        val calculationsId = calculationsUri?.lastPathSegment?.toInt()
+
+        showLogMessage("Новый элемент таблицы Calculations: $calculationsId")
     }
 
     private fun addElementsProgrammatically(context: Context?) {
@@ -167,9 +190,9 @@ class Square : Fragment() {
         //Layout с полем для ввода и кнопкой очистки полей
         val editSideAndClearFieldsLayout = LinearLayout(context)
         editSideAndClearFieldsLayout.gravity = Gravity.CENTER
-        editSide = EditText(context, null, 0, R.style.squareSide)
+        setupSide = EditText(context, null, 0, R.style.squareSide)
         clearFields = ImageButton(context, null, 0, R.style.clearButton)
-        clearFields!!.scaleType = ImageView.ScaleType.FIT_XY
+        clearFields?.scaleType = ImageView.ScaleType.FIT_XY
         //Параметры layout'а с полем ввода и кнопкой очистки полей
         val editSideAndClearFieldsLayoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -187,13 +210,13 @@ class Square : Fragment() {
         clearFieldsParams.marginStart = 50
         //Присваиваем параметры
         editSideAndClearFieldsLayout.layoutParams = editSideAndClearFieldsLayoutParams
-        editSide!!.layoutParams = editSideParams
-        clearFields!!.layoutParams = clearFieldsParams
+        setupSide?.layoutParams = editSideParams
+        clearFields?.layoutParams = clearFieldsParams
         //Добавляем editSide и clearFields в соответствующий layout
-        editSideAndClearFieldsLayout.addView(editSide)
+        editSideAndClearFieldsLayout.addView(setupSide)
         editSideAndClearFieldsLayout.addView(clearFields)
         //Добавляем Layout в главный layout
-        mainLayout!!.addView(editSideAndClearFieldsLayout)
+        binding.mainLayout.addView(editSideAndClearFieldsLayout)
 
 
         //Инициализация layout'а с полем ввода и кнопкой очистки полей
@@ -228,22 +251,22 @@ class Square : Fragment() {
 
         //Присваиваем параметры
         calculationsResults.layoutParams = calculationsResultsParams
-        areaResult!!.layoutParams = areaResultParams
-        perimeterResult!!.layoutParams = perimeterResultParams
+        areaResult?.layoutParams = areaResultParams
+        perimeterResult?.layoutParams = perimeterResultParams
 
         //Добавляем editSide и clearFields в соответствующий layout
         calculationsResults.addView(areaResult)
         calculationsResults.addView(perimeterResult)
 
         //Добавляем Layout в главный layout
-        mainLayout!!.addView(calculationsResults)
+        binding.mainLayout.addView(calculationsResults)
 
 
         //Инициализация кнопки рассчёта параметров и
         // сохранения результатов в бд
         calculateAndSaveIntoDB = Button(context, null,
                 0, R.style.calculateAndSaveIntoDB)
-        calculateAndSaveIntoDB!!.gravity = Gravity.CENTER
+        calculateAndSaveIntoDB?.gravity = Gravity.CENTER
         //Параметры кнопки подсчёта площади
         val calculateAndSaveIntoDBParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -252,9 +275,11 @@ class Square : Fragment() {
         calculateAndSaveIntoDBParams.marginStart = 55
         calculateAndSaveIntoDBParams.marginEnd = 55
         calculateAndSaveIntoDBParams.bottomMargin = 55
+
         //Присваиваем параметры
-        calculateAndSaveIntoDB!!.layoutParams = calculateAndSaveIntoDBParams
+        calculateAndSaveIntoDB?.layoutParams = calculateAndSaveIntoDBParams
+
         //Добавляем кнопку в главный layout
-        mainLayout!!.addView(calculateAndSaveIntoDB)
+        binding.mainLayout.addView(calculateAndSaveIntoDB)
     }
 }
