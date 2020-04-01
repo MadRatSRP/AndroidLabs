@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: "androidx.navigation.safeargs"
 
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -55,7 +57,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$app_compat"
     // Room
     implementation "androidx.room:room-runtime:$room"
-    annotationProcessor "androidx.room:room-compiler:$room"
+    kapt "androidx.room:room-compiler:$room"
     // ConstraintLayout
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout"
     // Navigation Architecture Component

@@ -6,10 +6,10 @@ import com.androidlabs.data.AppDatabase
 
 class App : Application() {
     companion object {
-        lateinit var instance: App
+        var instance: App? = null
     }
 
-    lateinit var database: AppDatabase
+    var database: AppDatabase? = null
 
     override fun onCreate() {
         super.onCreate()

@@ -9,7 +9,7 @@ import com.androidlabs.data.entity.Calculations
 import com.androidlabs.data.entity.Data
 import com.androidlabs.data.entity.Figure
 
-@Database(entities = [Figure::class, Calculations::class, Data::class], version = 1)
+@Database(entities = [Figure::class, Calculations::class, Data::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun figureDao(): FigureDao
     abstract fun calculationsDAO(): CalculationsDAO

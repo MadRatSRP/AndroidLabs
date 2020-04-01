@@ -57,7 +57,7 @@ class MyContentProvider : ContentProvider() {
         private val MATCHER = UriMatcher(UriMatcher.NO_MATCH)
     }
 
-    private lateinit var appDatabase: AppDatabase
+    private var appDatabase: AppDatabase? = null
     private var figureDao: FigureDao? = null
     private var dataDao: DataDao? = null
     private var calculationsDAO: CalculationsDAO? = null
@@ -78,7 +78,7 @@ class MyContentProvider : ContentProvider() {
         MATCHER.addURI(AUTHORITY, StaticMethods.figureTitle, CODE_FIGURE_DIR)
         MATCHER.addURI(AUTHORITY, StaticMethods.figureTitle + "/*", CODE_FIGURE_ITEM)
 
-        appDatabase = App.instance.database
+        appDatabase = App.instance?.database
     }
 
     override fun onCreate(): Boolean {
@@ -102,7 +102,7 @@ class MyContentProvider : ContentProvider() {
         if (providerContext == null) {
             return null
         }
-        calculationsDAO = appDatabase.calculationsDAO()
+        calculationsDAO = appDatabase?.calculationsDAO()
         val code = MATCHER.match(uri)
         // Calculations
         return if (code == CODE_CALCULATIONS_DIR || code == CODE_CALCULATIONS_ITEM) {
@@ -114,7 +114,7 @@ class MyContentProvider : ContentProvider() {
             cursor!!.setNotificationUri(providerContext!!.contentResolver, uri)
             cursor
         } else if (code == CODE_DATA_DIR || code == CODE_DATA_ITEM) {
-            dataDao = appDatabase.dataDao()
+            dataDao = appDatabase?.dataDao()
             val cursor: Cursor? = if (code == CODE_DATA_DIR) {
                 dataDao!!.selectAll()
             } else {
@@ -123,7 +123,7 @@ class MyContentProvider : ContentProvider() {
             cursor!!.setNotificationUri(providerContext!!.contentResolver, uri)
             cursor
         } else if (code == CODE_FIGURE_DIR || code == CODE_FIGURE_ITEM) {
-            figureDao = appDatabase.figureDao()
+            figureDao = appDatabase?.figureDao()
             val cursor: Cursor?
             cursor = if (code == CODE_FIGURE_DIR) {
                 figureDao!!.selectAll()
@@ -210,24 +210,24 @@ class MyContentProvider : ContentProvider() {
             null
         } else when (MATCHER.match(uri)) {
             CODE_CALCULATIONS_DIR -> {
-                val id = appDatabase.calculationsDAO()
-                        .insert(Calculations.fromContentValues(values)).toInt()
+                val id = appDatabase?.calculationsDAO()
+                        ?.insert(Calculations.fromContentValues(values))?.toInt()
                 providerContext!!.contentResolver.notifyChange(uri, null)
-                ContentUris.withAppendedId(uri, id.toLong())
+                id?.toLong()?.let { ContentUris.withAppendedId(uri, it) }
             }
             CODE_CALCULATIONS_ITEM -> insertCalculations(uri, values)
             CODE_DATA_DIR -> {
-                val id_data = appDatabase.dataDao()
-                        .insert(Data.fromContentValues(values)).toInt()
+                val id_data = appDatabase?.dataDao()
+                        ?.insert(Data.fromContentValues(values))?.toInt()
                 providerContext!!.contentResolver.notifyChange(uri, null)
-                ContentUris.withAppendedId(uri, id_data.toLong())
+                id_data?.toLong()?.let { ContentUris.withAppendedId(uri, it) }
             }
             CODE_DATA_ITEM -> insertData(uri, values)
             CODE_FIGURE_DIR -> {
-                val id_figure = appDatabase.figureDao()
-                        .insert(Figure.fromContentValues(values)).toInt()
+                val id_figure = appDatabase?.figureDao()
+                        ?.insert(Figure.fromContentValues(values))?.toInt()
                 providerContext!!.contentResolver.notifyChange(uri, null)
-                ContentUris.withAppendedId(uri, id_figure.toLong())
+                id_figure?.toLong()?.let { ContentUris.withAppendedId(uri, it) }
             }
             CODE_FIGURE_ITEM -> insertFigure(uri, values)
             else -> throw IllegalArgumentException("Неизвестный URI: $uri")
@@ -268,7 +268,7 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun insertFigure(uri: Uri, values: ContentValues?): Uri {
-        figureDao = appDatabase.figureDao()
+        figureDao = appDatabase?.figureDao()
         figure = Figure()
         figure!!.name = values!!.getAsString("name")
         val id = figureDao!!.insert(figure)
@@ -286,8 +286,8 @@ class MyContentProvider : ContentProvider() {
             CODE_CALCULATIONS_ITEM -> {
                 calculations = Calculations.fromContentValues(values)
                 calculations!!.id = ContentUris.parseId(uri).toInt()
-                val count: Int = appDatabase.calculationsDAO()
-                        .update(calculations)
+                val count: Int = appDatabase?.calculationsDAO()
+                        ?.update(calculations)!!
                 providerContext!!.contentResolver.notifyChange(uri, null)
                 count
             }
@@ -295,8 +295,8 @@ class MyContentProvider : ContentProvider() {
             CODE_DATA_ITEM -> {
                 data = Data.fromContentValues(values)
                 data!!.id = ContentUris.parseId(uri).toInt()
-                val count_data: Int = appDatabase.dataDao()
-                        .update(data)
+                val count_data: Int = appDatabase?.dataDao()
+                        ?.update(data)!!
                 providerContext!!.contentResolver.notifyChange(uri, null)
                 count_data
             }
@@ -304,8 +304,8 @@ class MyContentProvider : ContentProvider() {
             CODE_FIGURE_ITEM -> {
                 figure = Figure.Companion.fromContentValues(values)
                 figure?.id = ContentUris.parseId(uri)
-                val count_figure: Int = appDatabase.figureDao()
-                        .update(figure)
+                val count_figure: Int = appDatabase?.figureDao()
+                        ?.update(figure)!!
                 providerContext!!.contentResolver.notifyChange(uri, null)
                 count_figure
             }
@@ -320,15 +320,15 @@ class MyContentProvider : ContentProvider() {
         } else when (MATCHER.match(uri)) {
             CODE_CALCULATIONS_DIR -> removeAllCalculations()
             CODE_CALCULATIONS_ITEM -> {
-                val count: Int = appDatabase.calculationsDAO()
-                        .deleteById(Integer.valueOf(uri.lastPathSegment!!))
+                val count: Int = appDatabase?.calculationsDAO()
+                        ?.deleteById(uri.lastPathSegment?.toInt()!!)!!
                 providerContext!!.contentResolver.notifyChange(uri, null)
                 count
             }
             CODE_DATA_DIR -> throw IllegalArgumentException("Invalid URI, cannot update without ID$uri")
             CODE_DATA_ITEM -> {
-                val count_data: Int = appDatabase.dataDao()
-                        .deleteById(ContentUris.parseId(uri).toInt())
+                val count_data: Int = appDatabase?.dataDao()
+                        ?.deleteById(ContentUris.parseId(uri).toInt())!!
                 providerContext!!.contentResolver.notifyChange(uri, null)
                 count_data
             }
@@ -339,8 +339,8 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun removeAllFigures(): Int {
-        figureDao = appDatabase!!.figureDao()
-        return figureDao!!.removeAllFigures()
+        figureDao = appDatabase?.figureDao()
+        return figureDao?.removeAllFigures()!!
     }
 
     private fun removeAllCalculations(): Int {
@@ -349,7 +349,7 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun removeCalculation(uri: Uri, selection: String): Int {
-        calculationsDAO = appDatabase.calculationsDAO()
+        calculationsDAO = appDatabase?.calculationsDAO()
 
         //long id = Long.valueOf(uri.getLastPathSegment());
 
@@ -359,7 +359,7 @@ class MyContentProvider : ContentProvider() {
     }
 
     private fun updateCalculation(uri: Uri, values: ContentValues?): Int {
-        calculationsDAO = appDatabase.calculationsDAO()
+        calculationsDAO = appDatabase?.calculationsDAO()
         calculations = Calculations()
         calculations?.id = values!!.getAsInteger("id")
         calculations?.dataId = values.getAsInteger("dataId")
