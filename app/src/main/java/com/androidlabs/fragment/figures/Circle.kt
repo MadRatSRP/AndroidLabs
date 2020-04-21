@@ -10,14 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.androidlabs.R
-import com.androidlabs.activity.MainActivity
-import com.androidlabs.data.AppDatabase
-import com.androidlabs.data.dao.CalculationsDAO
-import com.androidlabs.data.dao.DataDao
-import com.androidlabs.data.entity.Calculations
 import com.androidlabs.databinding.FragmentCircleBinding
-import com.androidlabs.provider.MyContentProvider
-import com.androidlabs.util.App
 import com.androidlabs.util.showLogMessage
 import com.androidlabs.util.showSnackMessage
 import org.decimal4j.util.DoubleRounder

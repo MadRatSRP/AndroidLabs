@@ -12,13 +12,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.androidlabs.R
-import com.androidlabs.activity.MainActivity
-import com.androidlabs.data.AppDatabase
-import com.androidlabs.data.dao.CalculationsDAO
-import com.androidlabs.data.dao.DataDao
 import com.androidlabs.databinding.FragmentSquareBinding
-import com.androidlabs.provider.MyContentProvider
-import com.androidlabs.util.App
 import com.androidlabs.util.showLogMessage
 import org.decimal4j.util.DoubleRounder
 
