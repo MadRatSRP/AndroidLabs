@@ -1,9 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
-        <item android:id="@+id/figures"
-            android:title="@string/figuresTitle" />
-
-        <item android:id="@+id/history"
-            android:title="@string/historyTitle" />
-    </group>
-</menu>
